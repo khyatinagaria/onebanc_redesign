@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneBanc — One life. One bank.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1B2E;
+    --ink-2:#152742;
+    --paper:#F1ECE0;
+    --paper-2:#E8E1D2;
+    --copper:#B5622B;
+    --copper-dark:#8F4B1F;
+    --seal:#8C2F39;
+    --mint:#2F7A5C;
+    --line:#D3C7AC;
+    --line-dark:#2A3B58;
+    --slate:#5B5548;
+    --gold:#C89B3C;
+    --gold-dark:#96712A;
+    --cream-text:#EFE9DC;
+    --radius:2px;
+    --maxw:1240px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .serif{font-family:'Fraunces', serif;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+
+  /* ledger rule texture */
+  .ledger-bg{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 47px,
+      var(--line) 47px,
+      var(--line) 48px
+    );
+  }
+
+  /* ===== utility bar ===== */
+  .utilitybar{
+    background:var(--ink);
+    color:var(--cream-text);
+    font-size:12px;
+    letter-spacing:.06em;
+  }
+  .utilitybar .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:38px;
+  }
+  .utilitybar .brandline{
+    font-family:'Fraunces', serif; font-weight:600; font-size:13px; letter-spacing:.02em;
+  }
+  .utilitybar nav{display:flex; gap:26px;}
+  .utilitybar nav a{
+    text-transform:uppercase; border-bottom:1px solid transparent; padding-bottom:2px;
+    transition:border-color .15s ease, opacity .15s ease;
+    opacity:.85;
+  }
+  .utilitybar nav a:hover, .utilitybar nav a:focus-visible{ border-color:var(--copper); opacity:1; }
+  .utilitybar .contactbits{display:flex; gap:20px; align-items:center;}
+  .utilitybar .contactbits span{display:flex; align-items:center; gap:6px; text-transform:uppercase; opacity:.9;}
+
+  /* ===== main nav ===== */
+  .mainnav{
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:50;
+  }
+  .mainnav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .logo{display:flex; align-items:center; gap:10px;}
+  .logo .mark{height:34px;width:auto;display:block;}
+  .logo .word{font-family:'Fraunces', serif; font-weight:700; font-size:22px; letter-spacing:-.01em;}
+  .navlinks{display:flex; gap:34px; font-size:13.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;}
+  .navlinks a{position:relative; padding-bottom:4px;}
+  .navlinks a::after{
+    content:""; position:absolute; left:0; bottom:0; height:2px; width:0; background:var(--copper);
+    transition:width .18s ease;
+  }
+  .navlinks a:hover::after, .navlinks a:focus-visible::after{width:100%;}
+  .navright{display:flex; align-items:center; gap:18px;}
+  .themetoggle{
+    display:flex; align-items:center; gap:6px; border:1px solid var(--line);
+    border-radius:999px; padding:5px 10px; background:var(--paper-2); cursor:pointer;
+    font-size:12px;
+  }
+  .langpick{font-size:13px; font-style:italic; display:flex; align-items:center; gap:4px; cursor:pointer; position:relative;}
+  .langpick .langLabel{display:flex; align-items:center; gap:4px;}
+  .langpick .langList{
+    position:absolute; top:calc(100% + 10px); right:0; min-width:150px;
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 12px 24px -10px rgba(14,27,46,.25);
+    list-style:none; margin:0; padding:6px; font-style:normal;
+    opacity:0; visibility:hidden; transform:translateY(-6px);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s;
+    z-index:60;
+  }
+  .langpick.open .langList{ opacity:1; visibility:visible; transform:translateY(0); }
+  .langpick .langList li a{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 10px; border-radius:2px; font-size:13.5px; color:var(--ink);
+  }
+  .langpick .langList li a:hover, .langpick .langList li a:focus-visible{ background:var(--paper-2); color:var(--copper-dark); }
+  .langpick .langList li a.active{ color:var(--copper-dark); font-weight:600; }
+  .burger{display:none; background:none; border:none; cursor:pointer; padding:4px;}
+  .burger span{display:block; width:22px; height:2px; background:var(--ink); margin:4px 0;}
+
+  /* ===== hero ===== */
+  .hero {
+    position: relative;
+    padding: 40px 0 70px; /* Changed 96px to 40px to reduce top gap */
+    overflow: hidden;
+  }
+  
+  .hero .wrap {
+    display: grid; 
+    grid-template-columns: 1.05fr .95fr; 
+    gap: 56px; 
+    align-items: center; 
+    position: relative;
+  }
+
+    /* Shifts the hero eyebrow text up to avoid the background line */
+  .hero .eyebrow {
+    position: relative;
+    top: -12px; 
+    margin-bottom: 15px;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em;
+    color:var(--copper-dark); text-transform:uppercase; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--copper-dark); display:inline-block;}
+  h1.headline{
+    font-family:'Fraunces', serif; font-weight:600; font-size:clamp(40px, 5.4vw, 74px);
+    line-height:1.02; letter-spacing:-.01em; margin:20px 0 26px; color:var(--ink);
+  }
+  h1.headline em{
+    font-style:italic; color:var(--copper);
+  }
+  .heroSub{font-size:17px; line-height:1.65; color:var(--slate); max-width:480px; margin-bottom:34px;}
+  .ctaRow{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:40px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:14px 26px; font-weight:600; font-size:14.5px;
+    letter-spacing:.02em; border-radius:var(--radius); cursor:pointer; transition:transform .15s ease, background .15s ease;
+    border:1.5px solid transparent;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--copper); color:#FBF7EF;}
+  .btn-primary:hover{background:var(--copper-dark);}
+  .btn-outline{border-color:var(--ink); color:var(--ink); background:transparent;}
+  .btn-outline:hover{background:var(--ink); color:var(--paper);}
+  .trustrow{display:flex; gap:26px; flex-wrap:wrap;}
+  .trustchip{
+    display:flex; align-items:center; gap:8px; font-size:12px; color:var(--slate);
+    font-family:'IBM Plex Mono', monospace; text-transform:uppercase; letter-spacing:.04em;
+  }
+  .trustchip svg{width:16px; height:16px; flex:none;}
+
+  /* passbook card illustration */
+  .passbookArt{position:relative; display:flex; justify-content:center;}
+  .card{
+    width:340px; background:linear-gradient(155deg, #16294A 0%, #0E1B2E 60%, #0A1524 100%);
+    border-radius:14px; padding:26px 24px; color:var(--cream-text);
+    box-shadow:0 30px 60px -20px rgba(14,27,46,.45), 0 2px 0 rgba(255,255,255,.04) inset;
+    position:relative; transform:rotate(-4deg);
+    transition:transform .4s ease;
+  }
+  .passbookArt:hover .card{transform:rotate(-1deg) translateY(-4px);}
+  .card .chip{width:44px; height:32px; border-radius:5px; background:linear-gradient(135deg,#C9A876,#8F7440); margin-bottom:26px;}
+  .card .num{font-family:'IBM Plex Mono', monospace; font-size:19px; letter-spacing:.12em; margin-bottom:22px;}
+  .card .row{display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.06em; opacity:.75;}
+  .card .brand{position:absolute; top:24px; right:24px; font-family:'Fraunces', serif; font-weight:700; font-size:16px;}
+  .stamp{
+    position:absolute; bottom:-22px; left:-26px; width:112px; height:112px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    border-radius:50%; border:2.5px solid var(--seal); color:var(--seal);
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+    transform:rotate(-14deg); background:rgba(241,236,224,.9);
+    line-height:1.3; padding:8px;
+  }
+  .stamp b{display:block; font-size:12px; letter-spacing:.06em;}
+  @keyframes stampIn{
+    0%{transform:rotate(-14deg) scale(1.6); opacity:0;}
+    60%{transform:rotate(-14deg) scale(0.94); opacity:1;}
+    100%{transform:rotate(-14deg) scale(1);}
+  }
+  .stamp.animate{animation:stampIn .5s cubic-bezier(.2,.9,.3,1.2) both;}
+
+  .blob{
+    position:absolute; width:420px; height:420px; border-radius:50%;
+    background:radial-gradient(circle, rgba(181,98,43,.16), transparent 70%);
+    top:-140px; right:-120px; z-index:0;
+  }
+
+  /* ===== scroll-linked rupee coin + stitched thread ===== */
+  .coinRail{
+    position:fixed; top:0; right:56px; width:100px; height:100vh;
+    z-index:40; pointer-events:none; overflow:hidden;
+    transition:opacity .25s ease, visibility .25s ease;
+  }
+  .coinRail .threadSvg{
+    position:absolute; left:0; top:0; width:100%; height:2200px;
+    will-change:transform;
+  }
+  .coinRail .rupeeCoinImg{
+    position:absolute; top:150px; left:50%; width:58px; height:58px;
+    transform:translate(-50%,0) rotate(0deg);
+    will-change:transform, left;
+  }
+  @media (max-width:900px){ .coinRail{ display:none; } }
+  @media (min-width:901px){
+    .hero .wrap,
+    .pbPage .wrap{
+      padding-right: 170px;
+    }
+  }
+
+  /* ===== ledger strip stats ===== */
+  .stats{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:var(--paper-2);
+  }
+  .stats .wrap{display:grid; grid-template-columns:repeat(4,1fr); }
+  .stat{padding:30px 26px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .n{font-family:'Fraunces', serif; font-weight:700; font-size:34px; color:var(--ink);}
+  .stat .l{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--slate); margin-top:6px;}
+
+  /* ===== services / ledger entries ===== */
+  .section{padding:88px 0;}
+  .sectionHead{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:46px; flex-wrap:wrap; gap:16px;}
+  .sectionHead h2{
+    font-family:'Fraunces', serif; font-weight:600; font-size:clamp(28px,3.4vw,42px); margin:8px 0 0; letter-spacing:-.01em;
+  }
+  .sectionHead p{color:var(--slate); max-width:380px; font-size:14.5px; line-height:1.6; margin:0;}
+
+  .entries{display:grid; grid-template-columns:repeat(2, 1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .entry{
+    background:var(--paper); padding:38px 34px; position:relative;
+    transition:background .2s ease;
+  }
+  .entry:hover{background:#EAE3D2;}
+  .entry .code{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.1em; color:var(--copper-dark);
+    display:flex; justify-content:space-between; margin-bottom:18px;
+  }
+  .entry .code .status{color:var(--mint);}
+  .entry h3{font-family:'Fraunces', serif; font-size:23px; font-weight:600; margin:0 0 12px;}
+  .entry p{color:var(--slate); font-size:14.5px; line-height:1.65; margin:0 0 20px; max-width:420px;}
+  .entry .go{
+    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600;
+    border-bottom:1.5px solid var(--ink);
+  }
+  .entry .go svg{width:14px;height:14px; transition:transform .15s ease;}
+  .entry:hover .go svg{transform:translateX(4px);}
+
+  /* ===== passbook pages (services, one per scroll) ===== */
+  .pbPage{
+    padding:96px 0;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .pbGrid{
+    display:grid; grid-template-columns:1.05fr .95fr; gap:64px; align-items:center;
+  }
+  .pbPage.reverse .pbGrid{ grid-template-columns:.95fr 1.05fr; }
+  .pbPage.reverse .pbText{ order:2; }
+  .pbPage.reverse .pbStage{ order:1; }
+  .pbText .eyebrow{ margin-bottom:18px; }
+  .pbHeadline{
+    font-family:'Fraunces', serif; font-weight:800; font-size:clamp(34px,4.6vw,54px);
+    line-height:1.04; letter-spacing:-.01em; margin:0 0 28px; color:var(--ink);
+    text-transform:uppercase;
+  }
+  .pbList{ list-style:none; margin:0; padding:0; --tick:var(--copper); }
+  .pbList li{
+    position:relative; padding:11px 0 11px 30px; font-size:15.5px; color:var(--ink);
+    border-top:1px solid var(--line);
+  }
+  .pbList li:first-child{ border-top:none; }
+  .pbList li::before{
+    content:"—"; position:absolute; left:0; top:11px; color:var(--tick); font-weight:700;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .pbStage{
+    display:flex; align-items:center; justify-content:center; min-height:280px; position:relative;
+  }
+  .pbPageNum{
+    position:absolute; right:32px; bottom:18px; font-size:11px; letter-spacing:.1em;
+    color:var(--slate); text-transform:uppercase;
+  }
+  @media (max-width:900px){
+    .pbGrid{ grid-template-columns:1fr; gap:44px; }
+    .pbPage.reverse .pbGrid{ grid-template-columns:1fr; }
+    .pbPage.reverse .pbText{ order:1; }
+    .pbPage.reverse .pbStage{ order:2; }
+  }
+
+  /* -- Page 01: digitization scan animation -- */
+  .scanStage{ position:relative; width:280px; height:220px; }
+  .scanSheet{
+    position:absolute; inset:0; background:#FBF8F0; border:1px solid var(--line);
+    border-radius:6px; box-shadow:0 20px 40px -20px rgba(14,27,46,.25); padding:22px 20px;
+  }
+  .scanLine{ height:10px; margin-bottom:14px; border-radius:2px; background:var(--line); }
+  .scanLine.sl1{width:70%;} .scanLine.sl2{width:92%;} .scanLine.sl3{width:55%;}
+  .scanLine.sl4{width:85%;} .scanLine.sl5{width:40%;}
+  @keyframes scanColor{
+    0%,20%{background:var(--line);}
+    35%{background:var(--copper);}
+    60%,100%{background:var(--line);}
+  }
+  .scanLine.sl1{animation:scanColor 3.2s ease-in-out infinite; animation-delay:0s;}
+  .scanLine.sl2{animation:scanColor 3.2s ease-in-out infinite; animation-delay:.32s;}
+  .scanLine.sl3{animation:scanColor 3.2s ease-in-out infinite; animation-delay:.64s;}
+  .scanLine.sl4{animation:scanColor 3.2s ease-in-out infinite; animation-delay:.96s;}
+  .scanLine.sl5{animation:scanColor 3.2s ease-in-out infinite; animation-delay:1.28s;}
+  .scanBeam{
+    position:absolute; left:6px; right:6px; height:3px; top:0;
+    background:linear-gradient(90deg, transparent, var(--copper), transparent);
+    box-shadow:0 0 14px 2px rgba(181,98,43,.6);
+    animation:scanMove 3.2s ease-in-out infinite;
+  }
+  @keyframes scanMove{
+    0%{top:6px; opacity:.9;} 85%{top:196px; opacity:.9;} 100%{top:196px; opacity:0;}
+  }
+
+  /* -- Page 02: banking transfer animation -- */
+  .flowStage{ display:flex; align-items:center; gap:0; width:100%; max-width:340px; }
+  .flowNode{
+    width:56px; height:56px; border-radius:50%; border:2px solid var(--mint); background:var(--paper);
+    display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace;
+    color:var(--mint); font-weight:600; flex:none; z-index:2;
+  }
+  .flowNode.n1{animation:nodePulse 2.6s ease-in-out infinite;}
+  .flowNode.n2{animation:nodePulse 2.6s ease-in-out infinite; animation-delay:1.3s;}
+  @keyframes nodePulse{
+    0%,80%,100%{box-shadow:0 0 0 0 rgba(47,122,92,0);}
+    88%{box-shadow:0 0 0 8px rgba(47,122,92,.18);}
+  }
+  .flowTrack{
+    flex:1; height:2px; background-image:repeating-linear-gradient(to right, var(--line) 0 8px, transparent 8px 14px);
+    position:relative; margin:0 -2px;
+  }
+  .flowCoin{
+    position:absolute; top:50%; width:30px; height:30px; border-radius:50%; background:var(--mint); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;
+    transform:translate(-50%,-50%); animation:coinMove 2.6s ease-in-out infinite;
+    box-shadow:0 6px 14px -4px rgba(47,122,92,.5);
+  }
+  @keyframes coinMove{
+    0%{left:0%;} 45%{left:100%;} 50%{left:100%;} 95%{left:0%;} 100%{left:0%;}
+  }
+
+  /* -- Page 03: financial wellness bars animation -- */
+  .barStage{
+    display:flex; align-items:flex-end; gap:16px; height:200px; width:280px;
+  }
+  .barCol{
+    flex:1; background:linear-gradient(to top, var(--gold-dark), var(--gold));
+    border-radius:3px 3px 0 0; transform-origin:bottom;
+  }
+  .barCol.b1{height:60%; animation:barGrow 3.6s ease-in-out infinite; animation-delay:0s;}
+  .barCol.b2{height:85%; animation:barGrow 3.6s ease-in-out infinite; animation-delay:.2s;}
+  .barCol.b3{height:45%; animation:barGrow 3.6s ease-in-out infinite; animation-delay:.4s;}
+  .barCol.b4{height:95%; animation:barGrow 3.6s ease-in-out infinite; animation-delay:.6s;}
+  .barCol.b5{height:65%; animation:barGrow 3.6s ease-in-out infinite; animation-delay:.8s;}
+  @keyframes barGrow{
+    0%,100%{transform:scaleY(1);}
+    50%{transform:scaleY(1.18);}
+  }
+
+  /* -- Page 04: security seal animation -- */
+  .sealStage{ position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; }
+  .ringOuter, .ringInner{
+    position:absolute; border-radius:50%; border:2px dashed var(--seal); opacity:.55;
+  }
+  .ringOuter{ width:220px; height:220px; animation:spinCW 14s linear infinite; }
+  .ringInner{ width:160px; height:160px; animation:spinCCW 10s linear infinite; border-style:solid; opacity:.3; }
+  @keyframes spinCW{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  @keyframes spinCCW{ from{transform:rotate(0deg);} to{transform:rotate(-360deg);} }
+  .sealCore{
+    width:96px; height:96px; border-radius:50%; background:var(--ink); color:var(--cream-text);
+    display:flex; align-items:center; justify-content:center; z-index:2;
+    box-shadow:0 0 0 6px var(--paper-2), 0 14px 30px -10px rgba(140,47,57,.5);
+    animation:sealPulse 2.6s ease-in-out infinite;
+  }
+  .sealCore svg{ width:34px; height:34px; }
+  @keyframes sealPulse{
+    0%,100%{box-shadow:0 0 0 6px var(--paper-2), 0 0 0 0 rgba(140,47,57,.4);}
+    50%{box-shadow:0 0 0 6px var(--paper-2), 0 0 0 14px rgba(140,47,57,0);}
+  }
+
+  /* ===== trust / seal section ===== */
+  .trust{background:var(--ink); color:var(--cream-text); position:relative; overflow:hidden;}
+  .trust::before{
+    content:""; position:absolute; inset:0;
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 55px, var(--line-dark) 55px, var(--line-dark) 56px);
+    opacity:.5;
+  }
+  .trust .wrap{position:relative; z-index:1;}
+  .trust .sectionHead h2{color:var(--cream-text);}
+  .trust .sectionHead p{color:#AEB9CC;}
+  .trust .eyebrow{color:#D8935B;}
+  .trust .eyebrow::before{background:#D8935B;}
+  .seals{display:grid; grid-template-columns:repeat(3,1fr); gap:36px; margin-top:10px;}
+  .seal{
+    border:1.5px solid rgba(239,233,220,.25); padding:34px 26px; border-radius:4px; text-align:left;
+  }
+  .seal .ring{
+    width:56px;height:56px;border-radius:50%; border:2px solid var(--copper); display:flex; align-items:center; justify-content:center;
+    margin-bottom:20px;
+  }
+  .seal .ring svg{width:26px;height:26px;stroke:var(--copper);}
+  .seal h4{font-family:'Fraunces', serif; font-size:19px; margin:0 0 10px; font-weight:600;}
+  .seal p{font-size:13.5px; color:#AEB9CC; line-height:1.6; margin:0;}
+
+  /* ===== CTA banner ===== */
+  .ctaBanner{
+    background:var(--copper); color:#FBF7EF; text-align:center; padding:70px 0;
+  }
+  .ctaBanner h2{font-family:'Fraunces', serif; font-size:clamp(28px,3.6vw,44px); margin:0 0 22px; font-weight:600;}
+  .ctaBanner .btn-outline{border-color:#FBF7EF; color:#FBF7EF;}
+  .ctaBanner .btn-outline:hover{background:#FBF7EF; color:var(--copper-dark);}
+
+  /* ===== footer ===== */
+  footer {background:var(--ink-2); color:#AEB9CC; padding:64px 0 28px; font-size:14px;}
+  
+  /* Changed from a 5-column grid to a centered block layout */
+  .footgrid {display:block; text-align:center; padding-bottom:44px; border-bottom:1px solid var(--line-dark);}
+  
+  /* (These next three lines are kept just in case you reuse them, otherwise they are harmless) */
+  .footgrid h5 {color:#EFE9DC; font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; margin:0 0 16px;}
+  .footgrid ul {list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .footgrid a:hover {color:var(--copper);}
+  
+  /* ===== NEW FOOTER BRAND HEADER ===== */
+  .footbrand-centered {
+    text-align: center;
+    padding-bottom: 10px;
+  }
+  
+  .brand-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .foot-logo {
+    height: 38px; /* Adjust logo height as needed */
+    width: auto;
+  }
+  
+  .footbrand-centered .word {
+    color: #EFE9DC;
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0; 
+  }
+  
+  .footbrand-centered p {
+    max-width: 900px; 
+    margin: 0 auto 30px auto; /* 30px bottom margin pushes the dashed line down */
+    line-height: 1.8; 
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #AEB9CC;
+  }
+
+  /* The orange dashed line moved to the bottom */
+  .footbrand-centered .dashed-line {
+    width: 100%;
+    border-top: 2px dashed var(--copper);
+    margin-bottom: 20px;
+  }
+
+  /* Made the word a block element to hold the full-width dashed line beneath it */
+  .footbrand .word {
+    display: block;
+    color: #EFE9DC; 
+    font-family: 'Fraunces', serif; 
+    font-size: 28px; /* Slightly larger for the title */
+    font-weight: 700;
+    padding-bottom: 20px; 
+    margin-bottom: 20px;
+    border-bottom: 2px dashed var(--copper); /* Adds the orange dashed line */
+  }
+  
+  /* Removed the 280px max-width constraint so the text stretches across the page */
+  .footbrand p {
+    max-width: 900px; 
+    margin: 0 auto; 
+    line-height: 1.8; 
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  
+  .footbottom {display:flex; justify-content:space-between; padding-top:24px; font-size:12px; flex-wrap:wrap; gap:10px;}
+  /* ===== footer extra: offered-in / follow-us / useful-links / security-partner ===== */
+  .footExtra{
+    padding:8px 0 40px; display:flex; flex-direction:column; gap:36px;
+  }
+  .feBlock{ text-align:center; }
+  .feLabel{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:#8A94A6; margin-bottom:18px;
+  }
+  .feLangRow, .feLinksRow{
+    list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap;
+    justify-content:center; align-items:center; font-family:'Fraunces', serif; font-weight:600; font-size:14.5px;
+    row-gap:12px;
+  }
+  .feLangRow li, .feLinksRow li{ display:flex; align-items:center; }
+  .feLangRow li:not(:last-child)::after, .feLinksRow li:not(:last-child)::after{
+    content:"|"; color:var(--line-dark); margin:0 16px; font-weight:400; font-family:'IBM Plex Sans', sans-serif;
+  }
+  .feLangRow a, .feLinksRow a{
+    color:#EFE9DC; border-bottom:2px solid transparent; padding-bottom:3px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .feLangRow a:hover, .feLinksRow a:hover, .feLangRow a.active{
+    border-color:var(--copper); color:var(--copper);
+  }
+  .feMore{
+    width:26px; height:26px; border-radius:50%; border:1px solid var(--line-dark); background:transparent;
+    color:#EFE9DC; cursor:pointer; font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center;
+    margin-left:16px; font-family:'IBM Plex Sans', sans-serif; transition:border-color .15s ease, color .15s ease;
+  }
+  .feMore:hover{ border-color:var(--copper); color:var(--copper); }
+  .feSocials{ display:flex; justify-content:center; gap:16px; }
+  .feSocials a{
+    width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line-dark);
+    display:flex; align-items:center; justify-content:center; color:#EFE9DC;
+    font-family:'Fraunces', serif; font-weight:700; font-size:15px;
+    transition:border-color .15s ease, color .15s ease, transform .15s ease;
+  }
+  .feSocials a:hover{ border-color:var(--copper); color:var(--copper); transform:translateY(-2px); }
+  .feSocials svg{ width:17px; height:17px; }
+  .feSecurityLogos{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:26px;
+  }
+  .feSecurityLogos img{
+    height:32px; width:auto; border-radius:3px; background:#FBF7EF; padding:4px 8px;
+    opacity:.92; transition:opacity .15s ease, transform .15s ease;
+  }
+  .feSecurityLogos img:hover{ opacity:1; transform:translateY(-2px); }
+  @media (max-width:640px){
+    .feLangRow li:not(:last-child)::after, .feLinksRow li:not(:last-child)::after{ display:none; }
+    .feLangRow li, .feLinksRow li{ margin:0 8px 8px; }
+  }
+
+  @media (max-width: 900px){
+    .hero .wrap{grid-template-columns:1fr; gap:52px;}
+    .passbookArt{order:-1;}
+    .stats .wrap{grid-template-columns:repeat(2,1fr);}
+    .entries{grid-template-columns:1fr;}
+    .seals{grid-template-columns:1fr;}
+    .footgrid{grid-template-columns:1fr 1fr;}
+    .utilitybar nav{display:none;}
+    .navlinks{display:none;}
+    .burger{display:block;}
+  }
+  @media (max-width:520px){
+    .wrap{padding:0 20px;}
+    .card{width:100%;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="coinRail" aria-hidden="true">
+    <svg class="threadSvg" viewBox="0 0 100 2200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="" fill="none" stroke="#1c2b52" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 9" opacity=".85"/>
+    </svg>
+    <img class="rupeeCoinImg" src="rupee_coin.svg" alt="" width="58" height="58">
+  </div>
+
+  <div class="utilitybar">
+    <div class="wrap">
+      <span class="brandline">OneBanc Technologies Pvt. Ltd.</span>
+      <nav aria-label="Utility links">
+        <a href="#trust-seals">Trust</a>
+        <a href="#faq">FAQ</a>
+        <a href="#press">Press</a>
+        <a href="#sitemap">Sitemap</a>
+      </nav>
+      <div class="contactbits">
+        <a href="about-onebanc.html#visit-us">☎ Contact</a>
+        <a href="about-onebanc.html#visit-us">📍 Location</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mainnav">
+    <div class="wrap">
+      <div class="logo">
+        <img class="mark" src="onebanc_logo.svg" alt="OneBanc logo">
+        <span class="word">OneBanc</span>
+      </div>
+      <div class="navlinks">
+        <a href="onebanc-redesign.html">Home</a>
+        <a href="#digitization">Digitization</a>
+        <a href="#banking">Banking</a>
+        <a href="#financial">Financial</a>
+        <a href="#security">Security</a>
+        <a href="about-onebanc.html">About Us</a>
+      </div>
+      <div class="navright">
+        <button class="themetoggle" aria-label="Toggle theme">🌙 / ☀️</button>
+        <div class="langpick">
+          <span class="langLabel">English ▾</span>
+          <ul class="langList">
+            <li><a href="#" class="active">English</a></li>
+            <li><a href="#">हिन्दी</a></li>
+            <li><a href="#">বাংলা</a></li>
+            <li><a href="#">தமிழ்</a></li>
+            <li><a href="#">తెలుగు</a></li>
+            <li><a href="#">मराठी</a></li>
+          </ul>
+        </div>
+        <button class="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero ledger-bg">
+    <div class="blob" aria-hidden="true"></div>
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">Passbook Entry No. 001 — Opening Balance</div>
+        <h1 class="headline">One life.<br>One bank.<br><em>One page that adds up.</em></h1>
+        <p class="heroSub">Every rupee, entry, and safeguard — recorded in one ledger you can actually read. OneBanc brings digitization, banking, and security into a single statement of trust.</p>
+        <div class="ctaRow">
+          <a href="#account" class="btn btn-primary">Open an account →</a>
+          <a href="#how" class="btn btn-outline">See how it works</a>
+        </div>
+        <div class="trustrow">
+          <span class="trustchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg> Regulatory compliance</span>
+          <span class="trustchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="1"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Data encryption</span>
+          <span class="trustchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 10-5.5-2-9-5-9-10V6l9-4 9 4z"/></svg> Security review process</span>
+        </div>
+      </div>
+
+      <div class="passbookArt">
+        <div class="card">
+          <div class="brand">OneBanc</div>
+          <div class="chip"></div>
+          <div class="num">4021&nbsp; 88&middot;&middot;&middot;&middot;&nbsp; &middot;&middot;&middot;&middot;&nbsp; 7749</div>
+          <div class="row"><span>ONE LIFE</span><span>VALID THRU 09/31</span></div>
+          <div class="stamp animate"><b>Verified</b>Secure Ledger</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE 01 — DIGITIZATION ===== -->
+  <section class="pbPage" id="digitization" style="--pageAccent:var(--copper); background:var(--paper);">
+    <div class="wrap pbGrid">
+      <div class="pbText">
+        <div class="eyebrow">Passbook Entry — DGT</div>
+        <h2 class="pbHeadline">Enhanced<br><span style="color:var(--copper)">Digitization</span></h2>
+        <ul class="pbList">
+          <li>Instant digital account setup.</li>
+          <li>Smart spending and effortless saving.</li>
+          <li>Real-time financial tracking.</li>
+          <li>Simple, intuitive mobile banking.</li>
+          <li>24/7 access to your finances.</li>
+          <li>Secure banking with zero paperwork.</li>
+        </ul>
+      </div>
+      <div class="pbStage">
+        <div class="scanStage">
+          <div class="scanSheet">
+            <div class="scanLine sl1"></div>
+            <div class="scanLine sl2"></div>
+            <div class="scanLine sl3"></div>
+            <div class="scanLine sl4"></div>
+            <div class="scanLine sl5"></div>
+          </div>
+          <div class="scanBeam"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE 02 — BANKING ===== -->
+  <section class="pbPage reverse" id="banking" style="--pageAccent:var(--mint); background:var(--paper-2);">
+    <div class="wrap pbGrid">
+      <div class="pbStage">
+        <div class="flowStage">
+          <div class="flowNode n1"><span>A</span></div>
+          <div class="flowTrack">
+            <div class="flowCoin mono">₹</div>
+          </div>
+          <div class="flowNode n2"><span>B</span></div>
+        </div>
+      </div>
+      <div class="pbText">
+        <div class="eyebrow" style="color:var(--mint)">Passbook Entry — BNK</div>
+        <h2 class="pbHeadline">Enhanced<br><span style="color:var(--mint)">Banking</span></h2>
+        <ul class="pbList" style="--tick:var(--mint)">
+          <li>Personalized banking, designed for you.</li>
+          <li>Transparent. Fair. Customer-first.</li>
+          <li>Solutions that fit your financial journey.</li>
+          <li>Banking that evolves with your lifestyle.</li>
+          <li>Experience finance with a personal touch.</li>
+          <li>Helping you make smarter financial decisions.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE 03 — FINANCIAL WELLNESS ===== -->
+  <section class="pbPage" id="financial" style="--pageAccent:var(--gold); background:var(--paper);">
+    <div class="wrap pbGrid">
+      <div class="pbText">
+        <div class="eyebrow" style="color:var(--gold-dark)">Passbook Entry — FIN</div>
+        <h2 class="pbHeadline">Financial<br><span style="color:var(--gold)">Wellness</span></h2>
+        <ul class="pbList" style="--tick:var(--gold-dark)">
+          <li>Your finances, your control.</li>
+          <li>One dashboard for your entire financial life.</li>
+          <li>AI-driven insights that keep you ahead.</li>
+          <li>Personalized recommendations, tailored to you.</li>
+          <li>Smarter planning for a stronger financial future.</li>
+          <li>Make every financial decision count.</li>
+        </ul>
+      </div>
+      <div class="pbStage">
+        <div class="barStage">
+          <div class="barCol b1"></div>
+          <div class="barCol b2"></div>
+          <div class="barCol b3"></div>
+          <div class="barCol b4"></div>
+          <div class="barCol b5"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE 04 — SECURITY ===== -->
+  <section class="pbPage reverse" id="security" style="--pageAccent:var(--seal); background:var(--paper-2);">
+    <div class="wrap pbGrid">
+      <div class="pbStage">
+        <div class="sealStage">
+          <div class="ringOuter"></div>
+          <div class="ringInner"></div>
+          <div class="sealCore">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="pbText">
+        <div class="eyebrow" style="color:var(--seal)">Passbook Entry — SEC</div>
+        <h2 class="pbHeadline">Maximum<br><span style="color:var(--seal)">Security</span></h2>
+        <ul class="pbList" style="--tick:var(--seal)">
+          <li>Security is our highest priority.</li>
+          <li>[Add your actual customer / institution trust proof here.]</li>
+          <li>Protected with strong, modern encryption.</li>
+          <li>[List only the certifications you actually hold — e.g. GDPR, DPDP, ISO, PCI DSS.]</li>
+          <li>Continuous monitoring for maximum protection.</li>
+          <li>Bank with confidence, every day.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust" id="trust-seals">
+    <div class="wrap section">
+      <div class="sectionHead">
+        <div>
+          <div class="eyebrow">Stamped & Countersigned</div>
+          <h2>Trust, entered in ink.</h2>
+        </div>
+        <p>[Add your actual certifications, compliance standing, and audit commitments here.]</p>
+      </div>
+      <div class="seals">
+        <div class="seal">
+          <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg></div>
+          <h4>Regulatory standing</h4>
+          <p>[Replace with your actual regulatory status and compliance details.]</p>
+        </div>
+        <div class="seal">
+          <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="1"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+          <h4>Data protection</h4>
+          <p>[Replace with your actual encryption/security architecture details.]</p>
+        </div>
+        <div class="seal">
+          <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4M21 12c0 5-3.5 8-9 10-5.5-2-9-5-9-10V6l9-4 9 4z"/></svg></div>
+          <h4>Independent review</h4>
+          <p>[Replace with your actual audit process and cadence, if applicable.]</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ctaBanner" id="account">
+    <div class="wrap">
+      <h2>Open your first entry today.</h2>
+      <a href="#" class="btn btn-outline">Start onboarding →</a>
+    </div>
+  </section>
+
+  <footer id="sitemap">
+    <div class="wrap">
+      <div class="footbrand-centered">
+      <div class="brand-title">
+        <img src="onebanc_logo.svg" alt="OneBanc Logo" class="foot-logo">
+        <span class="word">OneBanc</span>
+      </div>
+      <p>OneBanc Technologies Pvt. Ltd. — digital banking infrastructure built like a passbook: legible, sequential, and yours to check.</p>
+      <div class="dashed-line"></div>
+    </div>
+        
+        
+        <div class="footExtra">
+        <div class="feBlock">
+          <span class="feLabel">Offered in</span>
+          <ul class="feLangRow">
+            <li><a href="#" class="active">English</a></li>
+            <li><a href="#">हिन्दी</a></li>
+            <li><a href="#">বাংলা</a></li>
+            <li><a href="#">ગુજરાતી</a></li>
+            <li><a href="#">ಕನ್ನಡ</a></li>
+            <li><a href="#">മലയാളം</a></li>
+            <li><button class="feMore" aria-label="More languages">+</button></li>
+          </ul>
+        </div>
+
+        <div class="feBlock">
+          <span class="feLabel">Follow us on</span>
+          <div class="feSocials">
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 8.5h2.5V5.2c-.43-.06-1.9-.2-3.6-.2-3.56 0-6 2.24-6 6.35V15H4.5v3.7H8v8.3h3.8v-8.3h3.35l.5-3.7H11.8v-2.7c0-1.07.29-1.8 1.83-1.8z"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5a1.94 1.94 0 100-3.88 1.94 1.94 0 000 3.88zM5.2 10.4h3.5V19H5.2v-8.6zm5.8 0h3.35v1.18h.05c.47-.85 1.6-1.75 3.3-1.75 3.53 0 4.18 2.24 4.18 5.15V19h-3.5v-3.62c0-.86-.02-1.97-1.24-1.97-1.24 0-1.43.93-1.43 1.9V19h-3.5v-8.6z"/></svg></a>
+            <a href="#" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.8 10.7L20 4h-1.7l-5.4 5.8L8.5 4H4l6.5 9.3L4 20h1.7l5.7-6.1 4.6 6.1H20l-6.8-9.3zM11.6 13l-.7-1L6 6h2l4.2 6 .7 1 5.4 7.4h-2L11.6 13z"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M10.5 9l4 3-4 3V9z" fill="currentColor" stroke="none"/></svg></a>
+          </div>
+        </div>
+
+        <div class="feBlock">
+          <span class="feLabel">Useful Links</span>
+          <ul class="feLinksRow">
+            <li><a href="#trust-seals">Trust</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Investor Charter</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="feBlock">
+          <span class="feLabel">Security Partner</span>
+          <div class="feSecurityLogos">
+            <img src="security_img_1.webp" alt="GDPR Compliant">
+            <img src="security_img_2.webp" alt="ISO Certified">
+            <img src="security_img_3.webp" alt="PCI DSS Compliant">
+            <img src="security_img_4.webp" alt="Security certification">
+            <img src="security_img_5.webp" alt="DPDPA Compliant">
+            <img src="security_img_6.webp" alt="CICRA Certified">
+          </div>
+        </div>
+      </div>
+
+      <div class="footbottom">
+        <span>© 2026 OneBanc Technologies Pvt. Ltd. All entries reserved.</span>
+        <span>Privacy · Terms · Sitemap</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // theme toggle: swap paper/ink accent lightness for a "night ledger" feel
+    const toggle = document.querySelector('.themetoggle');
+    toggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark-mode');
+      const root = document.documentElement.style;
+      if(document.documentElement.classList.contains('dark-mode')){
+        root.setProperty('--paper', '#1B2A3E');
+        root.setProperty('--paper-2', '#233350');
+        root.setProperty('--ink', '#F1ECE0');
+        root.setProperty('--slate', '#C6CBD6');
+        root.setProperty('--line', '#33445F');
+      } else {
+        root.setProperty('--paper', '#F1ECE0');
+        root.setProperty('--paper-2', '#E8E1D2');
+        root.setProperty('--ink', '#0E1B2E');
+        root.setProperty('--slate', '#5B5548');
+        root.setProperty('--line', '#D3C7AC');
+      }
+    });
+
+    // language picker dropdown
+    const langpick = document.querySelector('.langpick');
+    const langLabel = langpick.querySelector('.langLabel');
+    langpick.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langpick.classList.toggle('open');
+    });
+    langpick.querySelectorAll('.langList a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        langpick.querySelectorAll('.langList a').forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+        langLabel.textContent = a.textContent + ' ▾';
+        langpick.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', () => langpick.classList.remove('open'));
+
+    // mobile burger just anchors to nav for now
+    document.querySelector('.burger').addEventListener('click', () => {
+      document.querySelector('.navlinks').classList.toggle('open');
+    });
+
+    // ===== scroll-linked rupee coin: travels down a stitched thread and rolls as it goes =====
+    (function(){
+      const rail = document.querySelector('.coinRail');
+      if(!rail) return;
+      const coin   = rail.querySelector('.rupeeCoinImg');
+      const thread = rail.querySelector('.threadSvg');
+      const path   = thread.querySelector('path');
+      const trustSection = document.getElementById('trust-seals');
+
+      const RAIL_W   = 100;   // matches viewBox width
+      const CENTER_X = 50;    // horizontal center of the rail
+      const AMPLITUDE = 26;   // how far the thread/coin sway left-right
+      const PERIOD     = 240; // px of scroll for one full sway cycle
+      const TOTAL_H     = 2200; // matches viewBox height (drawn thread length)
+      const COIN_TOP     = 150; // fixed viewport offset of the coin
+      const COIN_DIAMETER = 58;
+      const CIRCUMFERENCE  = Math.PI * COIN_DIAMETER;
+      const ROTATION_SPEED  = 0.15; // <1 slows the coin's roll relative to scroll
+      const FADE_ZONE = 420; // px of scroll over which the rail fades out before Trust section
+
+      function waveX(y){
+        return CENTER_X + AMPLITUDE * Math.sin((2 * Math.PI * y) / PERIOD);
+      }
+
+      // build the dashed, wavy thread once
+      function buildThread(){
+        let d = `M ${waveX(0)} 0`;
+        for(let y = 8; y <= TOTAL_H; y += 8){
+          d += ` L ${waveX(y).toFixed(2)} ${y}`;
+        }
+        path.setAttribute('d', d);
+      }
+
+      let ticking = false;
+      function update(){
+        const s = window.scrollY || window.pageYOffset || 0;
+
+        // thread scrolls upward through the rail, looping seamlessly every PERIOD px
+        thread.style.transform = `translateY(${ -(s % PERIOD) }px)`;
+
+        // coin sits at a fixed screen height, riding the same wave the thread is on
+        const x = waveX(COIN_TOP + s);
+        // rolling rotation: proportional to distance travelled, reverses on scroll-up
+        const rotation = (s / CIRCUMFERENCE) * 360 * ROTATION_SPEED;
+
+        coin.style.left = x + 'px';
+        coin.style.transform = `translate(-50%, 0) rotate(${rotation}deg)`;
+
+        // fade the whole rail out as the Trust section approaches, and fully hide it
+        // (opacity + visibility) the moment that section reaches the top of the viewport
+        if(trustSection){
+          const trustTop = trustSection.getBoundingClientRect().top;
+          if(trustTop <= 0){
+            rail.style.opacity = 0;
+            rail.style.visibility = 'hidden';
+          } else {
+            rail.style.visibility = 'visible';
+            const fade = Math.min(1, Math.max(0, trustTop / FADE_ZONE));
+            rail.style.opacity = fade;
+          }
+        }
+
+        ticking = false;
+      }
+
+      function onScroll(){
+        if(!ticking){
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      }
+
+      buildThread();
+      update();
+      window.addEventListener('scroll', onScroll, {passive:true});
+      window.addEventListener('resize', update);
+    })();
+  </script>
+</body>
+</html>
